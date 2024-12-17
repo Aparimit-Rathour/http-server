@@ -1,34 +1,32 @@
-var todos = ["TODO"]
+var todos = [
+    {
+        "id":1,
+        "title":"zero todo"
+    }
+]
 
 const express = require("express");
 const app = express()
-
-app.use(express.text())
+app.use(express.json())
 
 app.get("/", function (req, res) {
-    res.send(todos)
+    res.json(todos)
 });
 
 app.post("/", function(req,res) {
-    todos.push(req.body)
-    res.send(req.body + " is added")
+    var newTodo = {}
+    newTodo.id = todos.length + 1
+    newTodo.title = req.body.title
+    todos.push(newTodo)
+    
+    res.send("Todo is added")
 })
 
-app.delete("/", function(req, res){
-    let isFound = 0
-    for(let i = 0; i < todos.length; i++){
-        if(todos[i] == req.body)
-        {
-            todos.splice(i,1)
-            isFound = 1
-        }
-    }
-    if(isFound){
-        res.send(req.body + " is deleted")
-    }
-    else{
-        res.send(req.body + " is not found")
-    }
+app.delete("/:id", function(req, res) {
+    const idToDelete = req.params.id
+    todos.splice(idToDelete-1,1)
+
+    res.send("Todo is deleted")   
 })
 
-app.listen(3000);
+app.listen(3000)
